@@ -1,0 +1,119 @@
+PROVA Teste de avaliação
+MÓDULO/UFCD: 0787
+ANO DE ESCOLARIDADE: 12 | TURMA: IST | VERSÃO: 1
+DATA: fev 2026 | CURSO: Informática Sistemas
+Objetivos Gerais
+• Conceber e implementar uma aplicação web full-stack
+• Recolher e persistir dados em base de dados relacional
+• Criar interfaces responsivas e acessíveis
+• Desenvolver uma área administrativa com análise de dados
+• Integrar funcionalidades de exportação e estatísticas
+• Utilizar GitHub e deploy em cloud gratuita
+• Promover autonomia, organização e pensamento critico
+DURAÇÃO: 90m*2
+Funcionalidades Obrigatórias
+1 Interface Pública (Secretaria)
+A aplicação deverá apresentar:
+• Três botões principais, representados por emojis:
+Muito Satisfeito
+Satisfeito
+Insatisfeito
+• Interface full screen, adequada a tablets
+• Feedback visual após o clique:
+Mensagem temporária de agradecimento
+• Bloqueio de múltiplos cliques consecutivos (timeout)
+Registo automático de:
+Grau de satisfação
+Data e hora
+• Dia da semana (campo adicional)
+Gestão de Dados (Base de Dados)
+A base de dados deverá:
+• Ser criada automaticamente pela aplicação
+• Conter pelo menos:
+ID
+• Grau de satisfação
+• Data
+• Hora
+• Garantir persistência correta dos dados
+• Permitir consultas agregadas (contagens, filtros)
+AMIDADE
+IVET
+3 Área de Administração (Obrigatória)
+A aplicação deverá incluir uma área de administração acessível por URL reservado, contendo:
+* Acesso
+• URL personalizada (ex.: /admin_2026)
+• (Opcional) Proteção com password simples
+I Estatísticas
+• Totais por tipo de satisfação
+• Percentagens relativas
+• Gráfico de barras (Chart.js)
+• (Opcional) Gráfico circular
+Análise Temporal
+• Filtragem por dia
+• Visualização apenas do dia atual
+• Comparação entre dias diferentes (opcional)
+Histórico
+Tabela com todos os registos
+• Ordenação por data
+• Paginação simples ou limite de registos
+4 Exportação de Dados
+A aplicação deverá permitir exportar os dados para:
+• CSV (Excel)
+• TXT
+• (Opcional) Exportação filtrada por data
+• Pro
+esc
+5 Usabilidade e Responsividade
+• Interface adaptável a:
+• Tablet
+o Smartphone
+• Computador
+• Botões grandes, legíveis e acessíveis
+• Respeito por princípios básicos de UX/UI
+Tecnologias Obrigatórias
+• Python 3
+• Flask
+• SQLite
+• HTML5 / CSS3
+• JavaScript
+• Chart.js
+• GitHub
+• Plataforma gratuita de deploy (ex.: Render)
+Critérios de Avaliação (0-20 valores)
+Critério
+Descrição
+Funcionalidade base
+Registo e funcionamento geral
+Interface e UX
+Responsividade e usabilidade
+3
+Base de dados
+Estrutura, persistência e consultas 3
+Área de administração
+Estatísticas, histórico e gráficos
+4
+Exportação de dados
+CSV / TXT e fiabilidade
+2
+Organização e versionamento Código, GitHub, commits
+
+Deploy e apresentação
+Aplicação online e defesa
+3
+Valores
+• Procurar
+Total
+20
+* Diferenciação / Valorização
+Serão valorizadas funcionalidades adicionais, tais como:
+• Password no admin
+• Reset automático diário
+• Comparação entre períodos
+• Dashboard mais completo
+• Melhorias visuais significativas
+• Comentários e documentação no código
+A Penalizações
+• Aplicação não funcional
+• Falta de deploy
+• Código copiado sem adaptação
+• Uso incorreto de ferramentas

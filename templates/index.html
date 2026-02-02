@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Satisfação - Secretaria</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Como foi o seu atendimento?</h1>
+            <p class="subtitle">Toque para avaliar</p>
+        </header>
+
+        <div class="buttons-container">
+            <button class="btn-satisfacao btn-muito-satisfeito" data-grau="muito_satisfeito" aria-label="Muito Satisfeito">
+                <span class="emoji">😊</span>
+                <span class="label">Muito Satisfeito</span>
+            </button>
+
+            <button class="btn-satisfacao btn-satisfeito" data-grau="satisfeito" aria-label="Satisfeito">
+                <span class="emoji">🙂</span>
+                <span class="label">Satisfeito</span>
+            </button>
+
+            <button class="btn-satisfacao btn-insatisfeito" data-grau="insatisfeito" aria-label="Insatisfeito">
+                <span class="emoji">😞</span>
+                <span class="label">Insatisfeito</span>
+            </button>
+        </div>
+
+        <div class="feedback" id="feedback">
+            <div class="feedback-content">
+                <span class="feedback-icon">✓</span>
+                <p>Obrigado pela sua avaliação!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

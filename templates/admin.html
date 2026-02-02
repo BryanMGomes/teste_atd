@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração - Avaliação de Satisfação</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Painel de Administração</h1>
+            <a href="/" class="btn-voltar">← Voltar à Avaliação</a>
+        </header>
+
+        <section class="filtros">
+            <h2>Filtros</h2>
+            <div class="filtro-grupo">
+                <label for="filtro-data">Filtrar por data:</label>
+                <select id="filtro-data">
+                    <option value="">Todas as datas</option>
+                    <option value="hoje">Apenas hoje</option>
+                </select>
+                <button id="btn-aplicar-filtro" class="btn-filtro">Aplicar</button>
+                <button id="btn-limpar-filtro" class="btn-filtro btn-secundario">Limpar</button>
+            </div>
+        </section>
+
+        <section class="estatisticas">
+            <h2>Estatísticas</h2>
+            <div class="stats-cards">
+                <div class="stat-card muito-satisfeito">
+                    <span class="emoji">😊</span>
+                    <div class="stat-info">
+                        <span class="stat-label">Muito Satisfeito</span>
+                        <span class="stat-valor" id="stat-muito-satisfeito">0</span>
+                        <span class="stat-percent" id="percent-muito-satisfeito">0%</span>
+                    </div>
+                </div>
+                <div class="stat-card satisfeito">
+                    <span class="emoji">🙂</span>
+                    <div class="stat-info">
+                        <span class="stat-label">Satisfeito</span>
+                        <span class="stat-valor" id="stat-satisfeito">0</span>
+                        <span class="stat-percent" id="percent-satisfeito">0%</span>
+                    </div>
+                </div>
+                <div class="stat-card insatisfeito">
+                    <span class="emoji">😞</span>
+                    <div class="stat-info">
+                        <span class="stat-label">Insatisfeito</span>
+                        <span class="stat-valor" id="stat-insatisfeito">0</span>
+                        <span class="stat-percent" id="percent-insatisfeito">0%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="total-geral">
+                Total de avaliações: <span id="total-geral">0</span>
+            </div>
+        </section>
+
+        <section class="graficos">
+            <h2>Gráficos</h2>
+            <div class="graficos-container">
+                <div class="grafico-wrapper">
+                    <canvas id="grafico-barras"></canvas>
+                </div>
+                <div class="grafico-wrapper">
+                    <canvas id="grafico-circular"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="exportacao">
+            <h2>Exportar Dados</h2>
+            <div class="export-buttons">
+                <a id="btn-export-csv" class="btn-export" download>
+                    📊 Exportar CSV (Excel)
+                </a>
+                <a id="btn-export-txt" class="btn-export" download>
+                    📄 Exportar TXT
+                </a>
+            </div>
+        </section>
+
+        <section class="historico">
+            <h2>Histórico de Avaliações</h2>
+            <table class="tabela-historico">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Satisfação</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Dia da Semana</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-body">
+                </tbody>
+            </table>
+            <div class="paginacao">
+                <button id="btn-anterior" class="btn-paginacao">← Anterior</button>
+                <span id="info-pagina">Página 1</span>
+                <button id="btn-proximo" class="btn-paginacao">Próximo →</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
