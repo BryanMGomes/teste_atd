@@ -13,6 +13,28 @@ body {
     justify-content: center;
 }
 
+.btn-admin {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+    z-index: 100;
+}
+
+.btn-admin:hover {
+    background: rgba(255,255,255,0.4);
+    transform: rotate(90deg);
+}
+
 .container {
     width: 100%;
     height: 100vh;
