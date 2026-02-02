@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Administração</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <span class="login-icon">🔐</span>
+                <h1>Área de Administração</h1>
+                <p>Introduza a password para aceder</p>
+            </div>
+            
+            {% if error %}
+            <div class="login-error">
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            <form method="POST" class="login-form">
+                <div class="form-group">
+                    <input type="password" name="password" placeholder="Password" required autofocus>
+                </div>
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+            
+            <a href="/" class="login-back">← Voltar à página principal</a>
+        </div>
+    </div>
+</body>
+</html>

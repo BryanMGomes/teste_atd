@@ -1,10 +1,15 @@
-from flask import Flask, render_template, request, jsonify, Response, redirect, url_for
+from flask import Flask, render_template, request, jsonify, Response, redirect, url_for, session
 import sqlite3
 from datetime import datetime
+from functools import wraps
 import csv
 import io
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
+
+ADMIN_PASSWORD = 'admin2026'
 
 DATABASE = 'satisfacao.db'
 
@@ -40,6 +45,14 @@ DIAS_SEMANA = {
     6: 'Domingo'
 }
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin_logged_in'):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -67,11 +80,30 @@ def registar():
     
     return jsonify({'success': True, 'message': 'Obrigado pela sua avaliação!'})
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin'))
+        else:
+            error = 'Password incorreta'
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('index'))
+
 @app.route('/admin_2026')
+@login_required
 def admin():
     return render_template('admin.html')
 
 @app.route('/admin_2026/estatisticas')
+@login_required
 def estatisticas():
     data_filtro = request.args.get('data', None)
     
@@ -114,6 +146,7 @@ def estatisticas():
     })
 
 @app.route('/admin_2026/historico')
+@login_required
 def historico():
     data_filtro = request.args.get('data', None)
     pagina = int(request.args.get('pagina', 1))
@@ -160,6 +193,7 @@ def historico():
     })
 
 @app.route('/admin_2026/datas')
+@login_required
 def datas_disponiveis():
     conn = get_db()
     rows = conn.execute('''
@@ -171,6 +205,7 @@ def datas_disponiveis():
     return jsonify({'datas': datas})
 
 @app.route('/admin_2026/exportar/csv')
+@login_required
 def exportar_csv():
     data_filtro = request.args.get('data', None)
     
@@ -215,6 +250,7 @@ def exportar_csv():
     )
 
 @app.route('/admin_2026/exportar/txt')
+@login_required
 def exportar_txt():
     data_filtro = request.args.get('data', None)
     

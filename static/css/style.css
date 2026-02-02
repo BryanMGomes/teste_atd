@@ -489,3 +489,118 @@ section h2 {
         font-size: 2rem;
     }
 }
+
+.login-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-box {
+    background: white;
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-header {
+    margin-bottom: 30px;
+}
+
+.login-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.login-header h1 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.login-header p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.login-error {
+    background: #ffe0e0;
+    color: #c00;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.login-back {
+    display: inline-block;
+    margin-top: 25px;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.login-back:hover {
+    text-decoration: underline;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.btn-logout {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    background: rgba(235, 51, 73, 0.8);
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.btn-logout:hover {
+    background: rgba(235, 51, 73, 1);
+}
