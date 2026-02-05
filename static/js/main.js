@@ -43,6 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             feedback.classList.remove('show');
-        }, 2500);
+        }, 2000);
     }
 });
