@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, Response, redirect, url_for, session
-import sqlite3
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from datetime import datetime
 from functools import wraps
 import csv
@@ -11,29 +12,31 @@ app.secret_key = os.urandom(24)
 
 ADMIN_PASSWORD = 'admin2026'
 
-DATABASE = 'satisfacao.db'
+# Configuração da base de dados PostgreSQL
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
     return conn
 
 def init_db():
     conn = get_db()
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS avaliacoes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            grau_satisfacao TEXT NOT NULL,
-            data TEXT NOT NULL,
-            hora TEXT NOT NULL,
-            dia_semana TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
+    with conn.cursor() as cur:
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS avaliacoes (
+                id SERIAL PRIMARY KEY,
+                grau_satisfacao TEXT NOT NULL,
+                data TEXT NOT NULL,
+                hora TEXT NOT NULL,
+                dia_semana TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
     conn.commit()
     conn.close()
 
-init_db()
+if DATABASE_URL:
+    init_db()
 
 DIAS_SEMANA = {
     0: 'Segunda-feira',
@@ -71,10 +74,11 @@ def registar():
     dia_semana = DIAS_SEMANA[agora.weekday()]
     
     conn = get_db()
-    conn.execute('''
-        INSERT INTO avaliacoes (grau_satisfacao, data, hora, dia_semana)
-        VALUES (?, ?, ?, ?)
-    ''', (grau, data_str, hora_str, dia_semana))
+    with conn.cursor() as cur:
+        cur.execute('''
+            INSERT INTO avaliacoes (grau_satisfacao, data, hora, dia_semana)
+            VALUES (%s, %s, %s, %s)
+        ''', (grau, data_str, hora_str, dia_semana))
     conn.commit()
     conn.close()
     
@@ -108,20 +112,21 @@ def estatisticas():
     data_filtro = request.args.get('data', None)
     
     conn = get_db()
-    
-    if data_filtro:
-        rows = conn.execute('''
-            SELECT grau_satisfacao, COUNT(*) as total
-            FROM avaliacoes
-            WHERE data = ?
-            GROUP BY grau_satisfacao
-        ''', (data_filtro,)).fetchall()
-    else:
-        rows = conn.execute('''
-            SELECT grau_satisfacao, COUNT(*) as total
-            FROM avaliacoes
-            GROUP BY grau_satisfacao
-        ''').fetchall()
+    with conn.cursor() as cur:
+        if data_filtro:
+            cur.execute('''
+                SELECT grau_satisfacao, COUNT(*) as total
+                FROM avaliacoes
+                WHERE data = %s
+                GROUP BY grau_satisfacao
+            ''', (data_filtro,))
+        else:
+            cur.execute('''
+                SELECT grau_satisfacao, COUNT(*) as total
+                FROM avaliacoes
+                GROUP BY grau_satisfacao
+            ''')
+        rows = cur.fetchall()
     
     stats = {
         'muito_satisfeito': 0,
@@ -154,24 +159,28 @@ def historico():
     offset = (pagina - 1) * limite
     
     conn = get_db()
-    
-    if data_filtro:
-        rows = conn.execute('''
-            SELECT * FROM avaliacoes
-            WHERE data = ?
-            ORDER BY data DESC, hora DESC
-            LIMIT ? OFFSET ?
-        ''', (data_filtro, limite, offset)).fetchall()
-        total_count = conn.execute('''
-            SELECT COUNT(*) FROM avaliacoes WHERE data = ?
-        ''', (data_filtro,)).fetchone()[0]
-    else:
-        rows = conn.execute('''
-            SELECT * FROM avaliacoes
-            ORDER BY data DESC, hora DESC
-            LIMIT ? OFFSET ?
-        ''', (limite, offset)).fetchall()
-        total_count = conn.execute('SELECT COUNT(*) FROM avaliacoes').fetchone()[0]
+    with conn.cursor() as cur:
+        if data_filtro:
+            cur.execute('''
+                SELECT * FROM avaliacoes
+                WHERE data = %s
+                ORDER BY data DESC, hora DESC
+                LIMIT %s OFFSET %s
+            ''', (data_filtro, limite, offset))
+            rows = cur.fetchall()
+            cur.execute('''
+                SELECT COUNT(*) FROM avaliacoes WHERE data = %s
+            ''', (data_filtro,))
+            total_count = cur.fetchone()['count']
+        else:
+            cur.execute('''
+                SELECT * FROM avaliacoes
+                ORDER BY data DESC, hora DESC
+                LIMIT %s OFFSET %s
+            ''', (limite, offset))
+            rows = cur.fetchall()
+            cur.execute('SELECT COUNT(*) FROM avaliacoes')
+            total_count = cur.fetchone()['count']
     
     registos = []
     for row in rows:
@@ -196,9 +205,11 @@ def historico():
 @login_required
 def datas_disponiveis():
     conn = get_db()
-    rows = conn.execute('''
-        SELECT DISTINCT data FROM avaliacoes ORDER BY data DESC
-    ''').fetchall()
+    with conn.cursor() as cur:
+        cur.execute('''
+            SELECT DISTINCT data FROM avaliacoes ORDER BY data DESC
+        ''')
+        rows = cur.fetchall()
     conn.close()
     
     datas = [row['data'] for row in rows]
@@ -210,16 +221,16 @@ def exportar_csv():
     data_filtro = request.args.get('data', None)
     
     conn = get_db()
-    
-    if data_filtro:
-        rows = conn.execute('''
-            SELECT * FROM avaliacoes WHERE data = ? ORDER BY data DESC, hora DESC
-        ''', (data_filtro,)).fetchall()
-    else:
-        rows = conn.execute('''
-            SELECT * FROM avaliacoes ORDER BY data DESC, hora DESC
-        ''').fetchall()
-    
+    with conn.cursor() as cur:
+        if data_filtro:
+            cur.execute('''
+                SELECT * FROM avaliacoes WHERE data = %s ORDER BY data DESC, hora DESC
+            ''', (data_filtro,))
+        else:
+            cur.execute('''
+                SELECT * FROM avaliacoes ORDER BY data DESC, hora DESC
+            ''')
+        rows = cur.fetchall()
     conn.close()
     
     output = io.StringIO()
@@ -255,16 +266,16 @@ def exportar_txt():
     data_filtro = request.args.get('data', None)
     
     conn = get_db()
-    
-    if data_filtro:
-        rows = conn.execute('''
-            SELECT * FROM avaliacoes WHERE data = ? ORDER BY data DESC, hora DESC
-        ''', (data_filtro,)).fetchall()
-    else:
-        rows = conn.execute('''
-            SELECT * FROM avaliacoes ORDER BY data DESC, hora DESC
-        ''').fetchall()
-    
+    with conn.cursor() as cur:
+        if data_filtro:
+            cur.execute('''
+                SELECT * FROM avaliacoes WHERE data = %s ORDER BY data DESC, hora DESC
+            ''', (data_filtro,))
+        else:
+            cur.execute('''
+                SELECT * FROM avaliacoes ORDER BY data DESC, hora DESC
+            ''')
+        rows = cur.fetchall()
     conn.close()
     
     grau_labels = {
